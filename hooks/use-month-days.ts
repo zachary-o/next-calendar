@@ -1,4 +1,4 @@
-import { useCurrentMonthStore } from "@/store/currentMonth"
+import { useCurrentMonthStore } from "@/store/currentMonthAndYear"
 import { useEffect } from "react"
 
 export const useMonthDays = (currentMonth: number, currentYear: number) => {

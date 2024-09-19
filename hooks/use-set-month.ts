@@ -7,7 +7,7 @@ export const useSetMonth = () => {
 
   const prevMonth = (): void => {
     if (currentMonth === 0) {
-      setCurrentYear(currentMonth - 1)
+      setCurrentYear(currentYear - 1)
       setCurrentMonth(11)
     } else {
       setCurrentMonth(currentMonth - 1)

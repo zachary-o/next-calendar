@@ -2,10 +2,12 @@
 
 import { monthNames } from "@/constants/monthsNames"
 import { useMonthDays, useSetMonth } from "@/hooks"
-import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
 import React from "react"
 import { Button } from "../ui/button"
 import { ModeToggle } from "../ui/mode-toggle"
+import { CalendarPopover } from "./calendar-popover"
+import { Arrow } from "./arrow"
 
 interface Props {
   className?: string
@@ -13,10 +15,11 @@ interface Props {
 
 export const Header: React.FC<Props> = ({ className }) => {
   const { currentYear, currentMonth, prevMonth, nextMonth } = useSetMonth()
-  const days = useMonthDays(currentMonth, currentYear)
+  useMonthDays(currentMonth, currentYear)
+
 
   return (
-    <header className="flex items-center justify-between py-8">
+    <header className="flex items-center justify-between py-4">
       {/* LEFT SIDE */}
       <div className="flex items-center gap-5">
         <ModeToggle />
@@ -28,17 +31,13 @@ export const Header: React.FC<Props> = ({ className }) => {
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-5">
         <div className="flex items-center justify-between">
-          <Button className="hover:bg-transparent" variant="ghost" onClick={prevMonth}>
-            <ChevronLeft />
-          </Button>
-          <span className="min-w-20 text-center">{monthNames[currentMonth]}</span>
-          <Button className="hover:bg-transparent" variant="ghost" onClick={nextMonth}>
-            <ChevronRight />
-          </Button>
+          <Arrow direction="left" onClick={prevMonth}/>
+            <span className="min-w-32 text-center">
+              {monthNames[currentMonth]} {currentYear}
+            </span>
+            <Arrow direction="right" onClick={nextMonth}/>
         </div>
-        <Button variant="outline" size="lg">
-          <Calendar />
-        </Button>
+        <CalendarPopover />
       </div>
     </header>
   )
