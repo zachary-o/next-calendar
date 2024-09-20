@@ -22,5 +22,12 @@ export const useSetMonth = () => {
     }
   }
 
-  return { currentYear, currentMonth, prevMonth, nextMonth }
+  return {
+    currentYear,
+    currentMonth,
+    setCurrentYear,
+    setCurrentMonth,
+    prevMonth,
+    nextMonth,
+  }
 }

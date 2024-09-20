@@ -1,13 +1,21 @@
-import { cn } from '@/lib/utils';
-import React from 'react';
+import { cn } from "@/lib/utils"
+import React from "react"
 
 interface Props {
-    month: string
-  className?: string;
+  month: string
+  onClick: () => void
+  className?: string
 }
 
-export const MonthCell: React.FC<Props> = ({ month, className }) => {
+export const MonthCell: React.FC<Props> = ({ month, onClick, className }) => {
   return (
-    <div className={cn("w-full px-2 py-1 text-center cursor-pointer text-sm hover:bg-blue-50")}>{month}</div>
-  );
-};
+    <div
+      className={cn(
+        "w-full px-2 py-1 text-center cursor-pointer text-sm hover:bg-blue-50"
+      )}
+      onClick={onClick}
+    >
+      {month}
+    </div>
+  )
+}

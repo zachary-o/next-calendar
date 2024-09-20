@@ -1,11 +1,11 @@
 "use client"
 
-import { useSetMonth } from "@/hooks"
+import { monthNames } from "@/constants/monthsNames"
+import { useMonthDays, useSetMonth } from "@/hooks"
 import { Calendar } from "lucide-react"
-import React, { useState } from "react"
+import React from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Arrow } from "./arrow"
-import { monthNames } from "@/constants/monthsNames"
 import { MonthCell } from "./month-cell"
 
 interface Props {
@@ -16,20 +16,21 @@ const minYear = 2020
 const maxYear = 2050
 
 export const CalendarPopover: React.FC<Props> = ({ className }) => {
-  const { currentMonth, currentYear } = useSetMonth()
-  const [selectedYear, setSelectedYear] = useState<number>(currentYear)
-  const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth)
+  const { currentMonth, currentYear ,setCurrentYear, setCurrentMonth} = useSetMonth()
 
   const prevYear = () => {
-    if (selectedYear > minYear) {
-      setSelectedYear((prevYearValue) => prevYearValue - 1)
+    if (currentYear > minYear) {
+      setCurrentYear((prevYearValue) => prevYearValue - 1)
     }
   }
+  
   const nextYear = () => {
-    if (selectedYear < maxYear) {
-      setSelectedYear((prevYearValue) => prevYearValue + 1)
+    if (currentYear < maxYear) {
+      setCurrentYear((prevYearValue) => prevYearValue + 1)
     }
   }
+
+  useMonthDays(currentMonth, currentYear)
 
   return (
     <Popover>
@@ -44,19 +45,19 @@ export const CalendarPopover: React.FC<Props> = ({ className }) => {
             <Arrow
               direction="left"
               onClick={prevYear}
-              disabled={selectedYear <= minYear}
+              disabled={currentYear <= minYear}
             />
-            {selectedYear}
+            {currentYear}
             <Arrow
               direction="right"
               onClick={nextYear}
-              disabled={selectedYear >= maxYear}
+              disabled={currentYear >= maxYear}
             />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
           {monthNames.map((month, index) => (
-            <MonthCell key={month} month={month}  />
+            <MonthCell key={month} month={month} onClick={() => setCurrentMonth(index)}/>
           ))}
         </div>
       </PopoverContent>

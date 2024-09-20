@@ -2,12 +2,12 @@
 
 import { monthNames } from "@/constants/monthsNames"
 import { useMonthDays, useSetMonth } from "@/hooks"
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import React from "react"
 import { Button } from "../ui/button"
 import { ModeToggle } from "../ui/mode-toggle"
-import { CalendarPopover } from "./calendar-popover"
 import { Arrow } from "./arrow"
+import { CalendarPopover } from "./calendar-popover"
 
 interface Props {
   className?: string
@@ -16,7 +16,6 @@ interface Props {
 export const Header: React.FC<Props> = ({ className }) => {
   const { currentYear, currentMonth, prevMonth, nextMonth } = useSetMonth()
   useMonthDays(currentMonth, currentYear)
-
 
   return (
     <header className="flex items-center justify-between py-4">

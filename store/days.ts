@@ -6,7 +6,7 @@ interface State {
   setDays: (currentMonth: number, currentYear: number) => void
 }
 
-export const useCurrentMonthStore = create<State>()((set) => ({
+export const useDaysStore = create<State>()((set) => ({
   days: [],
   setDays: (currentMonth: number, currentYear: number) => {
     const newDays = getMonthDays(currentMonth, currentYear)

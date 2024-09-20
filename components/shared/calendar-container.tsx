@@ -1,6 +1,6 @@
 "use client"
 
-import { useCurrentMonthStore } from "@/store/currentMonthAndYear"
+import { useDaysStore } from "@/store/days"
 import React from "react"
 import { DayCell } from "./day-cell"
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const CalendarContainer: React.FC<Props> = ({ className }) => {
-  const days = useCurrentMonthStore(state => state.days)
+  const days = useDaysStore(state => state.days)
   
   return (
     <div className="grid grid-cols-7">
