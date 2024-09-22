@@ -1,38 +1,53 @@
-"use client"
+"use client";
 
-import { useSetMonth } from "@/hooks"
-import { Calendar } from "lucide-react"
-import React, { useState } from "react"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { Arrow } from "./arrow"
-import { monthNames } from "@/constants/monthsNames"
-import { MonthCell } from "./month-cell"
+import { monthNames } from "@/constants/monthsNames";
+import { Calendar } from "lucide-react";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Arrow } from "./arrow";
+import { MonthCell } from "./month-cell";
 
 interface Props {
-  className?: string
+  currentMonth: number;
+  currentYear: number;
+  setCurrentMonth: (month: number) => void;
+  setCurrentYear: (year: number) => void;
+  className?: string;
 }
 
-const minYear = 2020
-const maxYear = 2050
+const minYear = 2020;
+const maxYear = 2050;
 
-export const CalendarPopover: React.FC<Props> = ({ className }) => {
-  const { currentMonth, currentYear } = useSetMonth()
-  const [selectedYear, setSelectedYear] = useState<number>(currentYear)
-  const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth)
+export const CalendarPopover: React.FC<Props> = ({
+  currentMonth,
+  currentYear,
+  setCurrentMonth,
+  setCurrentYear,
+}) => {
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const prevYear = () => {
     if (selectedYear > minYear) {
-      setSelectedYear((prevYearValue) => prevYearValue - 1)
+      setSelectedYear((prevYearValue) => prevYearValue - 1);
     }
-  }
+  };
   const nextYear = () => {
     if (selectedYear < maxYear) {
-      setSelectedYear((prevYearValue) => prevYearValue + 1)
+      setSelectedYear((prevYearValue) => prevYearValue + 1);
     }
-  }
+  };
+
+  const handleSetMonthAndYear = () => {
+    setCurrentMonth(selectedMonth);
+    setCurrentYear(selectedYear);
+    setShowCalendar(false);
+  };
 
   return (
-    <Popover>
+    <Popover open={showCalendar} onOpenChange={setShowCalendar}>
       <PopoverTrigger>
         <div>
           <Calendar />
@@ -56,10 +71,19 @@ export const CalendarPopover: React.FC<Props> = ({ className }) => {
         </div>
         <div className="grid grid-cols-3 gap-3">
           {monthNames.map((month, index) => (
-            <MonthCell key={month} month={month}  />
+            <MonthCell
+              key={month}
+              month={month}
+              selectedMonth={selectedMonth}
+              index={index}
+              onClick={() => setSelectedMonth(index)}
+            />
           ))}
         </div>
+        <Button className="w-full mt-4" onClick={handleSetMonthAndYear}>
+          Set
+        </Button>
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};

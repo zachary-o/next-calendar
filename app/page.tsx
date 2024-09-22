@@ -1,12 +1,9 @@
-import { CalendarContainer, Container, Header } from "@/components/shared";
+import { CalendarContainer, Container } from "@/components/shared";
 
 export default function Home() {
   return (
-
-    <Container >
-      <Header />
+    <Container>
       <CalendarContainer />
     </Container>
-    
   );
 }

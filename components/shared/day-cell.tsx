@@ -1,42 +1,53 @@
-import { cn } from "@/lib/utils"
-import React from "react"
+"use client";
+
+import { cn } from "@/lib/utils";
+import React from "react";
 
 interface Props {
-  date: number
-  dayOfWeek: string
-  isCurrentMonth: boolean
-  isToday: boolean
-  className?: string
+  day?: number;
+  currentDate?: Date;
+  currentMonth?: number;
+  currentYear?: number;
+  dayOfWeek?: string;
+  className?: string;
 }
 
 export const DayCell: React.FC<Props> = ({
-  date,
+  day,
+  currentDate,
+  currentMonth,
+  currentYear,
   dayOfWeek,
-  isCurrentMonth,
-  isToday,
-  className,
 }) => {
+
+  const isToday =
+    currentDate &&
+    day! === currentDate.getDate() &&
+    currentMonth === currentDate.getMonth() &&
+    currentYear === currentDate.getFullYear();
+
+
+
   return (
     <div
       className={cn(
         "h-36 flex flex-col border border-gray-500 cursor-pointer hover:bg-blue-50",
         {
-          "opacity-40": !isCurrentMonth,
           "bg-green-100": isToday,
         }
       )}
     >
       <div className="w-full p-2 flex flex-row items-center justify-between">
         <span
-          className={cn("text-sm font-bold hover:text-black", {
+          className={cn("text-sm font-bold", {
             "text-black": isToday,
-            "text-gray-500": !isToday, 
+            "text-gray-500": !isToday,
           })}
         >
-          {date}
+          {day}
         </span>
         <span
-          className={cn("text-sm font-bold hover:text-black", {
+          className={cn("text-sm font-bold", {
             "text-black": isToday,
             "text-gray-500": !isToday,
           })}
@@ -45,5 +56,5 @@ export const DayCell: React.FC<Props> = ({
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
