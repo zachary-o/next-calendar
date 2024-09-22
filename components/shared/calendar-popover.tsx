@@ -3,10 +3,10 @@
 import { monthNames } from "@/constants/monthsNames";
 import { Calendar } from "lucide-react";
 import React, { useState } from "react";
-import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Arrow } from "./arrow";
 import { MonthCell } from "./month-cell";
+import { Button } from "../ui/button";
 
 interface Props {
   currentMonth: number;
@@ -25,18 +25,19 @@ export const CalendarPopover: React.FC<Props> = ({
   setCurrentMonth,
   setCurrentYear,
 }) => {
-  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+  const [selectedYear, setYear] = useState<number>(currentYear);
   const [showCalendar, setShowCalendar] = useState(false);
 
   const prevYear = () => {
     if (selectedYear > minYear) {
-      setSelectedYear((prevYearValue) => prevYearValue - 1);
+      setYear((prevYearValue) => prevYearValue - 1);
     }
   };
+
   const nextYear = () => {
     if (selectedYear < maxYear) {
-      setSelectedYear((prevYearValue) => prevYearValue + 1);
+      setYear((prevYearValue) => prevYearValue + 1);
     }
   };
 
@@ -59,13 +60,13 @@ export const CalendarPopover: React.FC<Props> = ({
             <Arrow
               direction="left"
               onClick={prevYear}
-              disabled={selectedYear <= minYear}
+              disabled={currentYear <= minYear}
             />
             {selectedYear}
             <Arrow
               direction="right"
               onClick={nextYear}
-              disabled={selectedYear >= maxYear}
+              disabled={currentYear >= maxYear}
             />
           </div>
         </div>
@@ -73,9 +74,9 @@ export const CalendarPopover: React.FC<Props> = ({
           {monthNames.map((month, index) => (
             <MonthCell
               key={month}
-              month={month}
               selectedMonth={selectedMonth}
               index={index}
+              month={month}
               onClick={() => setSelectedMonth(index)}
             />
           ))}
