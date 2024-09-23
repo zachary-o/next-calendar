@@ -24,7 +24,7 @@ export const CalendarContainer: React.FC<Props> = () => {
   );
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
 
   const prevMonth = () => {
     setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1));
