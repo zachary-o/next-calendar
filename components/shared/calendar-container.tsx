@@ -1,68 +1,105 @@
-"use client"
+"use client";
 
-import { monthNames } from "@/constants/monthsNames"
-import { daysOfWeek } from "@/constants/weekdaysNames"
-import { Plus } from "lucide-react"
-import React, { useEffect, useState } from "react"
-import { Button } from "../ui/button"
-import { ModeToggle } from "../ui/mode-toggle"
-import { Arrow } from "./arrow"
-import { CalendarPopover } from "./calendar-popover"
-import { DayCell } from "./day-cell"
-import { TaskModal } from "./task-modal"
-import { useRouter, useSearchParams } from "next/navigation"
+import { monthNames } from "@/constants/monthsNames";
+import { daysOfWeek } from "@/constants/weekdaysNames";
+import { getTaskById } from "@/lib/get-task-by-id";
+import { getTasksForMonth } from "@/lib/get-tasks-for-month";
+import { Task } from "@prisma/client";
+import { Plus } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { ModeToggle } from "../ui/mode-toggle";
+import { Arrow } from "./arrow";
+import { CalendarPopover } from "./calendar-popover";
+import { DayCell } from "./day-cell";
+import { TaskModal } from "./task-modal";
 
 interface Props {
-  className?: string
+  className?: string;
 }
 
 export const CalendarContainer: React.FC<Props> = () => {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const currentDate = new Date()
-  const [showModal, setShowModal] = useState(false)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentDate = new Date();
+  const [showModal, setShowModal] = useState(false);
   const [currentMonth, setCurrentMonth] = useState<number>(
     currentDate.getMonth()
-  )
+  );
   const [currentYear, setCurrentYear] = useState<number>(
     currentDate.getFullYear()
-  )
+  );
+  const [tasksByMonth, setTasksByMonth] = useState<Task[]>([]);
+  const [task, setTask] = useState<Task>();
+  const [loading, setLoading] = useState(false);
 
-  // console.log(currentMonth, currentYear, new Date().getDay, new Date().getDate())
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
   const firstDayOfMonth =
-    (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7
+    (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
 
   const prevMonth = () => {
-    setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1))
-    setCurrentYear((prevYear) => (currentMonth === 0 ? prevYear - 1 : prevYear))
-  }
+    setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1));
+    setCurrentYear((prevYear) =>
+      currentMonth === 0 ? prevYear - 1 : prevYear
+    );
+  };
   const nextMonth = () => {
-    setCurrentMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1))
-    setCurrentYear((prevYear) => (currentMonth === 11 ? prevYear + 1 : prevYear))
-  }
+    setCurrentMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1));
+    setCurrentYear((prevYear) =>
+      currentMonth === 11 ? prevYear + 1 : prevYear
+    );
+  };
 
-  const selectedYear = searchParams.get("year")
-  const selectedMonth = searchParams.get("month")
-  const selectedDay = searchParams.get("day")
+  const selectedYear = searchParams.get("year");
+  const selectedMonth = searchParams.get("month");
+  const selectedDay = searchParams.get("day");
+  const selectedTaskId = searchParams.get("id");
 
   useEffect(() => {
     if (selectedYear && selectedMonth && selectedDay) {
-      setShowModal(true)
+      setShowModal(true);
     } else {
-      setShowModal(false)
+      setShowModal(false);
     }
-  }, [selectedYear, selectedMonth, selectedDay])
+  }, [selectedYear, selectedMonth, selectedDay]);
 
-  const handleOpenModal = () => {
-    setShowModal(true)
-  }
+  useEffect(() => {
+    async function fetchTask() {
+      if (!selectedTaskId || isNaN(Number(selectedTaskId))) return;
+      const task = await getTaskById(Number(selectedTaskId));
+      setTask(task);
+    }
+
+    fetchTask();
+  }, [selectedTaskId]);
+
+  const fetchAllTasks = async () => {
+    setLoading(true);
+    const tasks = await getTasksForMonth(currentYear, currentMonth + 1);
+    setTasksByMonth(tasks);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchAllTasks();
+  }, [currentMonth, currentYear]);
+
+  const handleOpenModal = (isNew = false) => {
+    setShowModal(true);
+    if (isNew) {
+      setTask(undefined);
+    }
+  };
 
   const handleCloseModal = () => {
-    setShowModal(false)
-    router.push("/")
-  }
+    setShowModal(false);
+    setTask(undefined);
+    router.replace("/");
+  };
+
+  console.log("tasksByMonth", tasksByMonth);
 
   return (
     <>
@@ -70,7 +107,7 @@ export const CalendarContainer: React.FC<Props> = () => {
         {/* LEFT SIDE */}
         <div className="flex items-center gap-5">
           <ModeToggle />
-          <Button size="icon" onClick={handleOpenModal}>
+          <Button size="icon" onClick={() => handleOpenModal(true)}>
             <Plus />
           </Button>
         </div>
@@ -101,30 +138,40 @@ export const CalendarContainer: React.FC<Props> = () => {
       </div>
       <div className="grid grid-cols-7">
         {[...Array(firstDayOfMonth).keys()].map((_, index) => (
-          <DayCell
-            className="pointer-events-none"
+          <div
             key={index}
-            currentMonth={currentMonth}
+            className="h-36 flex flex-col border border-gray-500 pointer-events-none opacity-50"
           />
         ))}
         {[...Array(daysInMonth).keys()].map((day) => {
-          const dayOfWeek = daysOfWeek[(day + firstDayOfMonth) % 7]
+          const dayOfWeek = daysOfWeek[(day + firstDayOfMonth) % 7];
           return (
             <DayCell
-              className="cursor-pointer"
               key={day + 1}
               day={day + 1}
               dayOfWeek={dayOfWeek}
               currentDate={currentDate}
               currentMonth={currentMonth}
               currentYear={currentYear}
+              loading={loading}
+              tasks={tasksByMonth || []}
             />
-          )
+          );
         })}
       </div>
       {showModal && (
-        <TaskModal id={`${selectedYear}-${selectedMonth}-${selectedDay}`} onClose={handleCloseModal}/>
+        <Suspense fallback="Loading...">
+          <TaskModal
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+            selectedDay={selectedDay}
+            selectedTaskById={task!}
+            handleCloseModal={handleCloseModal}
+            onClose={handleCloseModal}
+            fetchAllTasks={fetchAllTasks}
+          />
+        </Suspense>
       )}
     </>
-  )
-}
+  );
+};

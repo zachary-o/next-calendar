@@ -1,15 +1,18 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { Task } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import React from "react"
-
+import { TasksPreview } from "./tasks-preview"
 interface Props {
-  day?: number
-  currentDate?: Date
+  day: number
+  currentDate: Date
   currentMonth: number
-  currentYear?: number
-  dayOfWeek?: string
+  currentYear: number
+  dayOfWeek: string
+  tasks: Task[]
+  loading: boolean
   className?: string
 }
 
@@ -19,9 +22,14 @@ export const DayCell: React.FC<Props> = ({
   currentMonth,
   currentYear,
   dayOfWeek,
+  tasks,
+  // loading,
   className,
 }) => {
   const router = useRouter()
+  const tasksByDay = tasks.filter(
+    (task) => Number(task.taskDate.slice(0, 2)) === day
+  )
 
   const isToday =
     currentDate &&
@@ -42,9 +50,11 @@ export const DayCell: React.FC<Props> = ({
         },
         className
       )}
-      onClick={handleDayCellClick}
     >
-      <div className="w-full p-2 flex flex-row items-center justify-between">
+      <div
+        className="w-full p-2 flex flex-row items-center justify-between cursor-pointer"
+        onClick={handleDayCellClick}
+      >
         <span
           className={cn("text-sm font-bold", {
             "text-black": isToday,
@@ -62,6 +72,12 @@ export const DayCell: React.FC<Props> = ({
           {dayOfWeek}
         </span>
       </div>
+      <TasksPreview
+        day={day}
+        currentMonth={currentMonth}
+        currentYear={currentYear}
+        tasks={tasksByDay}
+      />
     </div>
   )
 }
