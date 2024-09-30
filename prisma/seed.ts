@@ -1,3 +1,4 @@
+import { hashSync } from "bcryptjs"
 import { prisma } from "./prisma-client"
 
 async function up() {
@@ -6,12 +7,12 @@ async function up() {
       {
         fullName: "Pidar Zaloopko",
         email: "hooynia@gmail.com",
-        password: "azazazazazaza",
+        password: hashSync("azazazaza", 10),
       },
       {
         fullName: "Zaloopa Pidorivna",
         email: "zaloopnia@gmail.com",
-        password: "azazazazazaza666",
+        password: hashSync("azazazaza666", 10),
       },
     ],
   })

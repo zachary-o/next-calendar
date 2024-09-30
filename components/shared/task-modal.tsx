@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from "@/hooks/use-toast";
 import { convertDateFormat } from "@/lib/convert-date-format";
 import { deleteTaskById } from "@/lib/delete-task-by-id";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ export const TaskModal: React.FC<Props> = ({
 }) => {
   const id = `${selectedDay}.${selectedMonth}.${selectedYear}`;
   const chosenDate = convertDateFormat(id);
+  const { toast } = useToast()
 
   const form = useForm({
     resolver: zodResolver(newTaskSchema),
@@ -64,18 +66,37 @@ export const TaskModal: React.FC<Props> = ({
   const handleDeleteTask = async (id: number) => {
     try {
       await deleteTaskById(id);
+      toast({
+        title: "Task deletion",
+        description: "Task successfully deleted"
+      })
       handleCloseModal();
       fetchAllTasks();
     } catch (error) {
       console.error("Failed to delete task", error);
+      toast({
+        title: "Task deletion",
+        description: "Task successfully deleted",
+        variant: "destructive"
+      })
     }
   };
 
   const onSubmit = async (data: TFormNewTaskValues) => {
     try {
       console.log("data", data);
+
+      toast({
+        title: "Task created",
+        description: "You successfully added a new task"
+      })
     } catch (error) {
       console.log("error", error);
+      toast({
+        title: "Failed to add a new task",
+        description: `${error}`,
+        variant: "destructive"
+      })
     }
   };
 

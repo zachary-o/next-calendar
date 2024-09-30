@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "@/components/shared"
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
@@ -29,14 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <main className="min-h-screen">{children}</main>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

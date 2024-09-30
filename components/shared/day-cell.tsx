@@ -12,7 +12,6 @@ interface Props {
   currentYear: number
   dayOfWeek: string
   tasks: Task[]
-  loading: boolean
   className?: string
 }
 
@@ -23,7 +22,6 @@ export const DayCell: React.FC<Props> = ({
   currentYear,
   dayOfWeek,
   tasks,
-  // loading,
   className,
 }) => {
   const router = useRouter()
