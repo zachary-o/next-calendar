@@ -11,11 +11,13 @@ import React, { useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import { ModeToggle } from "../ui/mode-toggle"
 import { Arrow } from "./arrow"
+import { AuthModal } from "./auth-modal"
 import { CalendarPopover } from "./calendar-popover"
 import { DayCell } from "./day-cell"
 import { ProfileButton } from "./profile-button"
 import { TaskModal } from "./task-modal"
-import { AuthModal } from "./auth-modal"
+import { useSession } from "next-auth/react"
+import { toast } from "@/hooks/use-toast"
 
 interface Props {
   className?: string
@@ -24,6 +26,7 @@ interface Props {
 export const CalendarContainer: React.FC<Props> = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { data: session, status } = useSession()
   const currentDate = new Date()
   const [showModal, setShowModal] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -75,18 +78,27 @@ export const CalendarContainer: React.FC<Props> = () => {
   }, [selectedTaskId])
 
   const fetchAllTasks = async () => {
-    const tasks = await getTasksForMonth(currentYear, currentMonth + 1)
-    setTasksByMonth(tasks)
+    if (status === "authenticated" && session) {
+      const tasks = await getTasksForMonth(currentYear, currentMonth + 1)
+      setTasksByMonth(tasks)
+    }
   }
 
   useEffect(() => {
     fetchAllTasks()
-  }, [currentMonth, currentYear])
+  }, [currentMonth, currentYear, status])
 
   const handleOpenModal = (isNew = false) => {
-    setShowModal(true)
-    if (isNew) {
-      setTask(undefined)
+    if (status === "unauthenticated" && !session) {
+      toast({
+        title: "Pliease Sign In or Sign up in order to add tasks",
+        variant: "destructive"
+      })
+    } else {
+      setShowModal(true)
+      if (isNew) {
+        setTask(undefined)
+      }
     }
   }
 
@@ -105,10 +117,11 @@ export const CalendarContainer: React.FC<Props> = () => {
           {
             <AuthModal
               open={showAuthModal}
+              fetchAllTasks={fetchAllTasks}
               onClose={() => setShowAuthModal(false)}
             />
           }
-          <ProfileButton onClickSignIn={() => setShowAuthModal(true)}/>
+          <ProfileButton onClickSignIn={() => setShowAuthModal(true)} />
           <Button size="icon" onClick={() => handleOpenModal(true)}>
             <Plus />
           </Button>
@@ -156,6 +169,7 @@ export const CalendarContainer: React.FC<Props> = () => {
               currentMonth={currentMonth}
               currentYear={currentYear}
               tasks={tasksByMonth || []}
+              fetchAllTasks={fetchAllTasks}
             />
           )
         })}

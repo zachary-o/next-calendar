@@ -8,11 +8,12 @@ import { toast } from "@/hooks/use-toast"
 import { signIn } from "next-auth/react"
 
 interface Props {
+  fetchAllTasks: () => void
   onClose?: VoidFunction
   className?: string
 }
 
-export const SignInForm: React.FC<Props> = ({ onClose, className }) => {
+export const SignInForm: React.FC<Props> = ({ fetchAllTasks, onClose, className }) => {
   const form = useForm<TFormSignInValues>({
     resolver: zodResolver(formSignInSchema),
     defaultValues: {
@@ -36,6 +37,7 @@ export const SignInForm: React.FC<Props> = ({ onClose, className }) => {
         description: "Successfully signed in ✅"
       })
       onClose?.()
+      fetchAllTasks()
     } catch (error) {
       console.log("error [LOGIN]", error)
       toast({
@@ -54,7 +56,7 @@ export const SignInForm: React.FC<Props> = ({ onClose, className }) => {
       >
         <div className="mt-2">
           <h4 className="text-bold text-sm">Account Log In</h4>
-          <p>Enter your email to sign in</p>
+          <p>Enter your email to log in</p>
         </div>
 
         <FormInput name="email" label="E-mail" required />

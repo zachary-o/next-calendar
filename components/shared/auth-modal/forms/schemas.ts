@@ -12,9 +12,9 @@ export const formSignInSchema = z.object({
 export const formSignUpSchema = formSignInSchema.merge(
   z.object({
     fullName: z.string().min(2, { message: "Enter your full name" }),
-    condirmPassword: passwordSchema
+    confirmPassword: passwordSchema
   })
-).refine(data => data.password === data.condirmPassword, {
+).refine(data => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
 })

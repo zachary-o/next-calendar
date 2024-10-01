@@ -2,15 +2,16 @@
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "next-auth/react"
-import { Toaster } from "../ui/toaster"
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar"
+import React from 'react'
+import { Toaster } from "../ui/toaster"
 
 export const Providers: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
     <>
       <ProgressBar
-        height="104px"
-        color="#fffd00"
+        height="4px"
+        color="#006eff"
         options={{ showSpinner: true }}
         shallowRouting
       />

@@ -1,5 +1,8 @@
 "use client"
 
+import { toast } from "@/hooks/use-toast"
+import { getTaskById } from "@/lib/get-task-by-id"
+import { updateTask } from "@/lib/update-task"
 import { cn } from "@/lib/utils"
 import { Task } from "@prisma/client"
 import { useRouter } from "next/navigation"
@@ -13,6 +16,7 @@ interface Props {
   currentMonth: number
   currentYear: number
   tasks: Task[]
+  fetchAllTasks: () => void
   className?: string
 }
 
@@ -21,6 +25,7 @@ export const TasksPreview: React.FC<Props> = ({
   currentMonth,
   currentYear,
   tasks,
+  fetchAllTasks,
   className,
 }) => {
   const router = useRouter()
@@ -30,7 +35,26 @@ export const TasksPreview: React.FC<Props> = ({
       `?year=${currentYear}&month=${currentMonth + 1}&day=${day}&id=${id}`
     )
   }
-console.log('tasks', tasks)
+
+  const handleCheckboxChange = async (task: Task) => {
+    const newStatus =
+      task.status === "NOT_STARTED" ? "COMPLETED" : "NOT_STARTED"
+    try {
+      await updateTask({ ...task, status: newStatus }, task.id)
+      toast({
+        title: "Status updated!"
+      })
+      fetchAllTasks()
+    } catch (error) {
+      console.error("Error updating task status", error)
+      toast({
+        title: "Error updating task status",
+        description: `${error}`,
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <ScrollArea className={cn("w-full", className)}>
       {tasks.length > 0
@@ -38,10 +62,15 @@ console.log('tasks', tasks)
             <div
               key={task.id}
               className="text-sm p-2 text-black hover:cursor-pointer"
-              onClick={() => handleTaskClick(task.id)}
             >
               <div className="flex flex-row gap-2">
-                <Checkbox /> {task.name}
+                <Checkbox
+                  checked={task.status === "COMPLETED"}
+                  onCheckedChange={() => {
+                    handleCheckboxChange(task)
+                  }}
+                />{" "}
+                <p className="dark:text-white dark:hover:text-black" onClick={() => handleTaskClick(task.id)}>{task.name}</p>
               </div>
               <Separator className="my-1 bg-slate-300 h-[1px]" />
             </div>

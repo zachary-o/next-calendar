@@ -1,18 +1,21 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Task } from "@prisma/client"
-import { useRouter } from "next/navigation"
-import React from "react"
-import { TasksPreview } from "./tasks-preview"
+import { cn } from "@/lib/utils";
+import { Task } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { TasksPreview } from "./tasks-preview";
+import { useSession } from "next-auth/react";
+import { toast } from "@/hooks/use-toast";
 interface Props {
-  day: number
-  currentDate: Date
-  currentMonth: number
-  currentYear: number
-  dayOfWeek: string
-  tasks: Task[]
-  className?: string
+  day: number;
+  currentDate: Date;
+  currentMonth: number;
+  currentYear: number;
+  dayOfWeek: string;
+  tasks: Task[];
+  fetchAllTasks: () => void;
+  className?: string;
 }
 
 export const DayCell: React.FC<Props> = ({
@@ -22,35 +25,49 @@ export const DayCell: React.FC<Props> = ({
   currentYear,
   dayOfWeek,
   tasks,
+  fetchAllTasks,
   className,
 }) => {
-  const router = useRouter()
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const tasksByDay = tasks.filter(
     (task) => Number(task.taskDate.slice(0, 2)) === day
-  )
+  );
 
   const isToday =
     currentDate &&
     day! === currentDate.getDate() &&
     currentMonth === currentDate.getMonth() &&
-    currentYear === currentDate.getFullYear()
+    currentYear === currentDate.getFullYear();
 
   const handleDayCellClick = () => {
-    router.push(`?year=${currentYear}&month=${currentMonth + 1}&day=${day}`)
-  }
+    if (status === "unauthenticated" && !session) {
+      toast({
+        title: "Pliease Sign In or Sign up in order to add tasks",
+        variant: "destructive",
+      });
+    } else {
+      router.push(`?year=${currentYear}&month=${currentMonth + 1}&day=${day}`);
+    }
+  };
 
   return (
     <div
       className={cn(
-        "h-36 flex flex-col border border-gray-500 hover:bg-blue-50",
+        "h-36 flex flex-col border border-gray-500 hover:bg-blue-400 dark:hover:text-black",
         {
-          "bg-green-100": isToday,
+          "bg-green-200": isToday,
         },
         className
       )}
     >
       <div
-        className="w-full p-2 flex flex-row items-center justify-between cursor-pointer"
+        className={cn(
+          "w-full p-2 flex flex-row items-center justify-between cursor-pointer",
+          {
+            "pointer-events-none": status === "unauthenticated" && !session,
+          }
+        )}
         onClick={handleDayCellClick}
       >
         <span
@@ -75,7 +92,8 @@ export const DayCell: React.FC<Props> = ({
         currentMonth={currentMonth}
         currentYear={currentYear}
         tasks={tasksByDay}
+        fetchAllTasks={fetchAllTasks}
       />
     </div>
-  )
-}
+  );
+};

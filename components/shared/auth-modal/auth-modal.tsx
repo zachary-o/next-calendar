@@ -3,14 +3,16 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { signIn } from "next-auth/react"
 import React, { useState } from "react"
 import { SignInForm } from "./forms/sign-in-form"
+import { SignUpForm } from "./forms/sign-up-form"
 
 interface Props {
   open: boolean
+  fetchAllTasks: () => void
   onClose: () => void
   className?: string
 }
 
-export const AuthModal: React.FC<Props> = ({ open, onClose, className }) => {
+export const AuthModal: React.FC<Props> = ({ open, fetchAllTasks, onClose, className }) => {
   const [type, setType] = useState<"signin" | "signup">("signin")
 
   const onSwitchType = () => {
@@ -20,13 +22,14 @@ export const AuthModal: React.FC<Props> = ({ open, onClose, className }) => {
   const handleClose = () => {
     onClose()
   }
+  
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[450px] bg-violet-400 p-10">
         {type === "signin" ? (
-          <SignInForm onClose={handleClose} />
+          <SignInForm fetchAllTasks={fetchAllTasks} onClose={handleClose} />
         ) : (
-          <h1>dfd</h1>
+          <SignUpForm onClose={handleClose}/>
         )}
         <hr />
         <div className="flex gap-2">
