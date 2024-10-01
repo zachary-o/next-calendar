@@ -1,19 +1,22 @@
-"use client"
+"use client";
 
-import { toast } from "@/hooks/use-toast"
-import { updateUserInfo } from "@/lib/update-user-info"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { User } from "@prisma/client"
-import { signOut } from "next-auth/react"
-import React from "react"
-import { FormProvider, useForm } from "react-hook-form"
-import { Button } from "../ui/button"
-import { formSignUpSchema, TFormSignUpValues } from "./auth-modal/forms/schemas"
-import { Container } from "./container"
-import { FormInput } from "./form-input"
+import { toast } from "@/hooks/use-toast";
+import { updateUserInfo } from "@/lib/update-user-info";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
+import React from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { Button } from "../ui/button";
+import {
+  formSignUpSchema,
+  TFormSignUpValues,
+} from "./auth-modal/forms/schemas";
+import { Container } from "./container";
+import { FormInput } from "./form-input";
 
 interface Props {
-  data: User
+  data: User;
 }
 
 export const ProfileForm: React.FC<Props> = ({ data }) => {
@@ -25,7 +28,7 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   const onSubmit = async (data: TFormSignUpValues) => {
     try {
@@ -33,21 +36,25 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
         email: data.email,
         fullName: data.fullName,
         password: data.password,
-      })
+      });
 
       toast({
         title: "Info has been updated",
-      })
+      });
     } catch (error) {
-      return toast({ title: "Failed to updated the info" })
+      return toast({
+        title: "Failed to updated the info",
+        description: `${error}`,
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   const onClickSignOut = () => {
     signOut({
       callbackUrl: "/",
-    })
-  }
+    });
+  };
 
   return (
     <Container className="my-10">
@@ -91,5 +98,5 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
         </form>
       </FormProvider>
     </Container>
-  )
-}
+  );
+};

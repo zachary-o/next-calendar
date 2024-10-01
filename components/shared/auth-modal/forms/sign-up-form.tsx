@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button"
-import { toast } from "@/hooks/use-toast"
-import { registerUser } from "@/lib/register-user"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { FormProvider, useForm } from "react-hook-form"
-import { FormInput } from "../../form-input"
-import { formSignUpSchema, TFormSignUpValues } from "./schemas"
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { registerUser } from "@/lib/register-user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormInput } from "../../form-input";
+import { formSignUpSchema, TFormSignUpValues } from "./schemas";
 
 interface Props {
-  onClose?: VoidFunction
+  onClose?: VoidFunction;
 }
 
 export const SignUpForm: React.FC<Props> = ({ onClose }) => {
@@ -19,7 +19,7 @@ export const SignUpForm: React.FC<Props> = ({ onClose }) => {
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   const onSubmit = async (data: TFormSignUpValues) => {
     try {
@@ -27,19 +27,21 @@ export const SignUpForm: React.FC<Props> = ({ onClose }) => {
         email: data.email,
         fullName: data.fullName,
         password: data.password,
-      })
+      });
 
       toast({
         title: "You successfully signed up 📝",
-      })
+      });
 
-      onClose?.()
+      onClose?.();
     } catch (error) {
       return toast({
         title: "Incorrect email or password ❌",
-      })
+        description: `${error}`,
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   return (
     <FormProvider {...form}>
@@ -66,5 +68,5 @@ export const SignUpForm: React.FC<Props> = ({ onClose }) => {
         </Button>
       </form>
     </FormProvider>
-  )
-}
+  );
+};

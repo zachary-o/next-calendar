@@ -9,10 +9,9 @@ interface Props {
   open: boolean
   fetchAllTasks: () => void
   onClose: () => void
-  className?: string
 }
 
-export const AuthModal: React.FC<Props> = ({ open, fetchAllTasks, onClose, className }) => {
+export const AuthModal: React.FC<Props> = ({ open, fetchAllTasks, onClose }) => {
   const [type, setType] = useState<"signin" | "signup">("signin")
 
   const onSwitchType = () => {

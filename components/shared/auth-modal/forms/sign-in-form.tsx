@@ -10,10 +10,9 @@ import { signIn } from "next-auth/react"
 interface Props {
   fetchAllTasks: () => void
   onClose?: VoidFunction
-  className?: string
 }
 
-export const SignInForm: React.FC<Props> = ({ fetchAllTasks, onClose, className }) => {
+export const SignInForm: React.FC<Props> = ({ fetchAllTasks, onClose }) => {
   const form = useForm<TFormSignInValues>({
     resolver: zodResolver(formSignInSchema),
     defaultValues: {
