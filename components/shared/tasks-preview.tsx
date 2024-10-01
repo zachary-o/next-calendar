@@ -2,7 +2,6 @@
 
 import { toast } from "@/hooks/use-toast";
 import { updateTask } from "@/lib/update-task";
-import { cn } from "@/lib/utils";
 import { Task } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React from "react";
