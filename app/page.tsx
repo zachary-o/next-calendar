@@ -1,9 +1,12 @@
-import { CalendarContainer, Container } from "@/components/shared";
+import { CalendarContainer, Container } from "@/components/shared"
+import { Suspense } from "react"
 
 export default function Home() {
   return (
-    <Container>
-      <CalendarContainer />
-    </Container>
-  );
+    <Suspense>
+      <Container>
+        <CalendarContainer />
+      </Container>
+    </Suspense>
+  )
 }
