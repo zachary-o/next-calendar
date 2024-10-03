@@ -13,7 +13,8 @@ export async function registerUser(body: Prisma.UserCreateInput) {
     })
 
     if (user) {
-      throw new Error("Email already exists")
+      console.log("Email already exists")
+      return null
     }
 
     await prisma.user.create({
