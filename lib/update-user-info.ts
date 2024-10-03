@@ -10,7 +10,7 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput) {
     const currentUser = await getUserSession()
 
     if (!currentUser) {
-      throw new Error("User not found")
+      return { error: "User not found" };
     }
 
     const findUser = await prisma.user.findFirst({
