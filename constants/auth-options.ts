@@ -63,7 +63,7 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
-  secret: sdfsd7fs97fs98d7s9878s7fbd9b7d98f7d9f8b7d98fbd7bd65f67d4f754dfbd0f8b0d9f8b,
+  secret: 'sdfsd7fs97fs98d7s9878s7fbd9b7d98f7d9f8b7d98fbd7bd65f67d4f754dfbd0f8b0d9f8b',
   session: {
     strategy: "jwt",
   },
