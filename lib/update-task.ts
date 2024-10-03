@@ -18,6 +18,5 @@ export async function updateTask(body: Prisma.TaskUpdateInput, id: number) {
     })
   } catch (error) {
     console.log("[UPDATE_TASK Error]", error)
-    throw error
   }
 }
