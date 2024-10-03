@@ -10,7 +10,7 @@ export async function createNewTask(body: TFormNewTaskValues) {
     const currentUser = await getUserSession();
 
     if (!currentUser) {
-      throw new Error("User not found");
+      return { error: "User not found" };
     }
 
     const findUser = await prisma.user.findFirst({
@@ -20,7 +20,7 @@ export async function createNewTask(body: TFormNewTaskValues) {
     });
 
     if (!findUser) {
-      throw new Error("User not found");
+      return { error: "User not found" };
     }
 
     await prisma.task.create({
@@ -34,6 +34,5 @@ export async function createNewTask(body: TFormNewTaskValues) {
     });
   } catch (error) {
     console.log("[CREATE NEW TASK] Error: ", error);
-    throw error;
   }
 }
