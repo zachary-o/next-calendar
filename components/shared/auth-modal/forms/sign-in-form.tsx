@@ -29,7 +29,13 @@ export const SignInForm: React.FC<Props> = ({ fetchAllTasks, onClose }) => {
       })
 
       if (!response?.ok) {
-        throw Error()
+        if (!response?.ok) {
+      toast({
+        title: "Failed to log in ❌",
+        description: "Invalid email or password.",
+        variant: "destructive",
+      })
+      return
       }
       toast({
         title: "Log In",
