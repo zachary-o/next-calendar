@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { newTaskSchema, TFormNewTaskValues } from "@/schemas/new-task-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Task } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
