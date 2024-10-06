@@ -32,6 +32,7 @@ export const DayPicker: React.FC<Props> = ({
   );
   const [selectedYear, setSelectedYear] = useState<number>(Number(currentYear));
   const [yearsArray, setYearsArray] = useState<number[]>([]);
+  console.log("selectedMonth", selectedMonth);
 
   useEffect(() => {
     const getYearsArray = () => {
@@ -43,6 +44,17 @@ export const DayPicker: React.FC<Props> = ({
     };
     getYearsArray();
   }, [currentYear]);
+
+  const prevMonth = () => {
+    setSelectedMonth((prevMonth) => (prevMonth === 1 ? 12 : prevMonth - 1));
+  };
+
+  const nextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+    }
+    setSelectedMonth(selectedMonth + 1);
+  };
 
   console.log("selectedYear", selectedYear);
 
@@ -59,20 +71,22 @@ export const DayPicker: React.FC<Props> = ({
           <CalendarDays className="w-5 h-5" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-70">
+      <PopoverContent className="min-w-64">
         <div>
           <div className="h-4 flex items-center justify-between">
             <Arrow
               className="h-12 w-12"
               direction="left"
-              onClick={() => {}}
+              onClick={prevMonth}
               disabled={false}
             />
-            {monthNames[Number(currentMonth) - 1]}
+            <span className="min-w-20 text-center">
+              {monthNames[Number(selectedMonth) - 1]}
+            </span>
             <Arrow
               className="h-12 w-12"
               direction="right"
-              onClick={() => {}}
+              onClick={nextMonth}
               disabled={false}
             />
             <YearSelect
