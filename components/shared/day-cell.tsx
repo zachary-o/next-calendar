@@ -33,12 +33,15 @@ export const DayCell: React.FC<Props> = ({
   const tasksByDay = tasks.filter(
     (task) => Number(task.taskDate.slice(0, 2)) === day
   );
+  const dayCellDate = new Date(`${currentYear}-${currentMonth + 1}-${day}`);
 
   const isToday =
     currentDate &&
     day! === currentDate.getDate() &&
     currentMonth === currentDate.getMonth() &&
     currentYear === currentDate.getFullYear();
+
+  const isPast = dayCellDate < currentDate && !isToday;
 
   const handleDayCellClick = () => {
     if (status === "unauthenticated" && !session) {
@@ -50,6 +53,8 @@ export const DayCell: React.FC<Props> = ({
       router.push(`?year=${currentYear}&month=${currentMonth + 1}&day=${day}`);
     }
   };
+
+  console.log('Number("09")', Number("09"));
 
   return (
     <div
@@ -65,7 +70,8 @@ export const DayCell: React.FC<Props> = ({
         className={cn(
           "w-full p-2 flex flex-row items-center justify-between cursor-pointer",
           {
-            "pointer-events-none": status === "unauthenticated" && !session,
+            "pointer-events-none":
+              isPast || (status === "unauthenticated" && !session),
           }
         )}
         onClick={handleDayCellClick}

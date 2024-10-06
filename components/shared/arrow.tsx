@@ -12,14 +12,22 @@ interface Props {
   className?: string;
 }
 
-export const Arrow: React.FC<Props> = ({ direction, disabled, onClick }) => {
+export const Arrow: React.FC<Props> = ({
+  direction,
+  disabled,
+  onClick,
+  className,
+}) => {
   switch (direction) {
     case "left":
       return (
         <Button
-          className={cn("hover:bg-transparent", {
-            "opacity-50 pointer-events-none": disabled,
-          })}
+          className={
+            (cn("hover:bg-transparent", {
+              "opacity-50 pointer-events-none": disabled,
+            }),
+            className)
+          }
           variant="ghost"
           onClick={onClick}
         >
@@ -29,9 +37,13 @@ export const Arrow: React.FC<Props> = ({ direction, disabled, onClick }) => {
     case "right":
       return (
         <Button
-          className={cn("hover:bg-transparent", {
-            "opacity-50 pointer-events-none": disabled,
-          })}
+          className={cn(
+            "hover:bg-transparent",
+            {
+              "opacity-50 pointer-events-none": disabled,
+            },
+            className
+          )}
           variant="ghost"
           onClick={onClick}
         >

@@ -1,28 +1,30 @@
-"use client"
+"use client";
 
-import { useToast } from "@/hooks/use-toast"
-import { convertDateFormat } from "@/lib/convert-date-format"
-import { createNewTask } from "@/lib/create-new-task"
-import { deleteTaskById } from "@/lib/delete-task-by-id"
-import { cn } from "@/lib/utils"
-import { newTaskSchema, TFormNewTaskValues } from "@/schemas/new-task-schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Task } from "@prisma/client"
-import { useEffect } from "react"
-import { FormProvider, useForm } from "react-hook-form"
-import { Button } from "../ui/button"
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog"
-import { FormInput } from "./form-input"
-import { updateTask } from "@/lib/update-task"
+import { toast } from "@/hooks/use-toast";
+import { convertDateFormat } from "@/lib/convert-date-format";
+import { createNewTask } from "@/lib/create-new-task";
+import { deleteTaskById } from "@/lib/delete-task-by-id";
+import { updateTask } from "@/lib/update-task";
+import { cn } from "@/lib/utils";
+import { newTaskSchema, TFormNewTaskValues } from "@/schemas/new-task-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Task } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { FormInput } from "./form-input";
 
 interface Props {
-  selectedYear: string | null
-  selectedMonth: string | null
-  selectedDay: string | null
-  selectedTaskById: Task | undefined
-  handleCloseModal: () => void
-  onClose: () => void
-  fetchAllTasks: () => void
+  selectedYear: string | null;
+  selectedMonth: string | null;
+  selectedDay: string | null;
+  selectedTaskById: Task | undefined;
+  daysInMonth: number;
+  firstDayOfMonth: number;
+  handleCloseModal: () => void;
+  onClose: () => void;
+  fetchAllTasks: () => void;
 }
 
 export const TaskModal: React.FC<Props> = ({
@@ -30,14 +32,14 @@ export const TaskModal: React.FC<Props> = ({
   selectedMonth,
   selectedDay,
   selectedTaskById,
+  daysInMonth,
+  firstDayOfMonth,
   handleCloseModal,
   onClose,
   fetchAllTasks,
 }) => {
-  const id = `${selectedDay}.${selectedMonth}.${selectedYear}`
-  const chosenDate = convertDateFormat(id)
-
-  const { toast } = useToast()
+  const id = `${selectedDay}.${selectedMonth}.${selectedYear}`;
+  const chosenDate = convertDateFormat(id);
 
   const form = useForm({
     resolver: zodResolver(newTaskSchema),
@@ -46,8 +48,7 @@ export const TaskModal: React.FC<Props> = ({
       description: "",
       taskDate: id && id !== "null.null.null" ? chosenDate : "",
     },
-  })
-  console.log("selectedTaskById", selectedTaskById)
+  });
 
   useEffect(() => {
     if (selectedTaskById) {
@@ -55,50 +56,48 @@ export const TaskModal: React.FC<Props> = ({
         name: selectedTaskById.name || "",
         description: selectedTaskById.description || "",
         taskDate: selectedTaskById.taskDate || "",
-      })
+      });
     } else {
       form.reset({
         name: "",
         description: "",
         taskDate: id && id !== "null.null.null" ? chosenDate : "",
-      })
+      });
     }
-  }, [selectedTaskById, id, chosenDate, form])
+  }, [selectedTaskById, id, chosenDate, form]);
 
   const handleDeleteTask = async (id: number) => {
-    console.log("id", id)
     try {
-      await deleteTaskById(id)
+      await deleteTaskById(id);
       toast({
         title: "Task deletion",
         description: "Task successfully deleted",
-      })
-      handleCloseModal()
-      fetchAllTasks()
+      });
+      handleCloseModal();
+      fetchAllTasks();
     } catch (error) {
-      console.error("Failed to delete task", error)
+      console.error("Failed to delete task", error);
       toast({
         title: "Task deletion",
         description: "Failed to delete a task",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const onSubmit = async (data: TFormNewTaskValues) => {
-    console.log("data", data)
     try {
       if (!selectedTaskById) {
         await createNewTask({
           name: data.name,
           description: data.description,
           taskDate: data.taskDate,
-        })
+        });
 
         toast({
           title: "Task created",
           description: "You successfully added a new task",
-        })
+        });
       } else {
         await updateTask(
           {
@@ -107,25 +106,25 @@ export const TaskModal: React.FC<Props> = ({
             taskDate: data ? data.taskDate : selectedTaskById.taskDate,
           },
           selectedTaskById.id
-        )
+        );
 
         toast({
           title: "Task updated",
           description: "You successfully updated a task",
-        })
+        });
       }
 
-      handleCloseModal()
-      fetchAllTasks()
+      handleCloseModal();
+      fetchAllTasks();
     } catch (error) {
-      console.log("error", error)
+      console.log("error", error);
       toast({
         title: "Failed to add a new task",
         description: `${error}`,
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   return (
     <Dialog open={Boolean(id)} onOpenChange={onClose}>
@@ -135,7 +134,9 @@ export const TaskModal: React.FC<Props> = ({
           "bg-white dark:bg-gray-600"
         )}
       >
-        <DialogTitle className="text-black dark:text-white">Add new task</DialogTitle>
+        <DialogTitle className="text-black dark:text-white">
+          Add new task
+        </DialogTitle>
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <FormInput className="mb-10" name="name" label="Name" required />
@@ -147,7 +148,10 @@ export const TaskModal: React.FC<Props> = ({
             <FormInput
               name="taskDate"
               label="Date and time in format DD.MM.YYYY"
+              date
               required
+              daysInMonth={daysInMonth}
+              firstDayOfMonth={firstDayOfMonth}
             />
             <div className="flex flex-row justify-end gap-4">
               {selectedTaskById && (
@@ -156,7 +160,7 @@ export const TaskModal: React.FC<Props> = ({
                   type="button"
                   variant="destructive"
                   onClick={() => {
-                    handleDeleteTask(selectedTaskById.id)
+                    handleDeleteTask(selectedTaskById.id);
                   }}
                 >
                   Delete
@@ -174,5 +178,5 @@ export const TaskModal: React.FC<Props> = ({
         </FormProvider>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

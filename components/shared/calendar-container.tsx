@@ -159,7 +159,7 @@ export const CalendarContainer: React.FC<Props> = () => {
           />
         ))}
         {[...Array(daysInMonth).keys()].map((day) => {
-          const dayOfWeek = daysOfWeek[(day + firstDayOfMonth) % 7]
+          const dayOfWeek = daysOfWeek[(day + firstDayOfMonth) % 7];
           return (
             <DayCell
               key={day + 1}
@@ -171,7 +171,7 @@ export const CalendarContainer: React.FC<Props> = () => {
               tasks={tasksByMonth || []}
               fetchAllTasks={fetchAllTasks}
             />
-          )
+          );
         })}
       </div>
       {showModal && (
@@ -179,12 +179,14 @@ export const CalendarContainer: React.FC<Props> = () => {
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           selectedDay={selectedDay}
-          selectedTaskById={task!}
+          selectedTaskById={task}
+          daysInMonth={daysInMonth}
+          firstDayOfMonth={firstDayOfMonth}
           handleCloseModal={handleCloseModal}
           onClose={handleCloseModal}
           fetchAllTasks={fetchAllTasks}
         />
       )}
     </>
-  )
+  );
 }

@@ -26,18 +26,18 @@ export const CalendarPopover: React.FC<Props> = ({
   setCurrentYear,
 }) => {
   const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
-  const [selectedYear, setYear] = useState<number>(currentYear);
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [showCalendar, setShowCalendar] = useState(false);
 
   const prevYear = () => {
     if (selectedYear > minYear) {
-      setYear((prevYearValue) => prevYearValue - 1);
+      setSelectedYear((prevYearValue) => prevYearValue - 1);
     }
   };
 
   const nextYear = () => {
     if (selectedYear < maxYear) {
-      setYear((prevYearValue) => prevYearValue + 1);
+      setSelectedYear((prevYearValue) => prevYearValue + 1);
     }
   };
 
@@ -50,9 +50,7 @@ export const CalendarPopover: React.FC<Props> = ({
   return (
     <Popover open={showCalendar} onOpenChange={setShowCalendar}>
       <PopoverTrigger>
-        <div>
-          <Calendar />
-        </div>
+        <Calendar />
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div>
