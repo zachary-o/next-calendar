@@ -66,7 +66,7 @@ export const TaskModal: React.FC<Props> = ({
     }
   }, [selectedTaskById, id, chosenDate, form]);
 
-  const handleDeleteTask = async (id: number) => {
+  const handleDeleteTask = async (id: number): Promise<void> => {
     try {
       await deleteTaskById(id);
       toast({
@@ -85,7 +85,9 @@ export const TaskModal: React.FC<Props> = ({
     }
   };
 
-  const onSubmit = async (data: TFormNewTaskValues) => {
+  const onSubmit = async <T extends TFormNewTaskValues>(
+    data: T
+  ): Promise<void> => {
     try {
       if (!selectedTaskById) {
         await createNewTask({

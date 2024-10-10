@@ -43,16 +43,16 @@ export const CalendarContainer: React.FC<Props> = () => {
   const firstDayOfMonth =
     (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7
 
-  const prevMonth = () => {
+  const prevMonth = (): void => {
     setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1))
     setCurrentYear((prevYear) => (currentMonth === 0 ? prevYear - 1 : prevYear))
   }
-  const nextMonth = () => {
-    setCurrentMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1))
+  const nextMonth = (): void => {
+    setCurrentMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1));
     setCurrentYear((prevYear) =>
       currentMonth === 11 ? prevYear + 1 : prevYear
-    )
-  }
+    );
+  };
 
   const selectedYear = searchParams.get("year")
   const selectedMonth = searchParams.get("month")
@@ -68,7 +68,7 @@ export const CalendarContainer: React.FC<Props> = () => {
   }, [selectedYear, selectedMonth, selectedDay])
 
   useEffect(() => {
-    async function fetchTask() {
+    async function fetchTask(): Promise<void> {
       if (!selectedTaskId || isNaN(Number(selectedTaskId))) return
       const task = await getTaskById(Number(selectedTaskId))
       setTask(task)
@@ -77,7 +77,7 @@ export const CalendarContainer: React.FC<Props> = () => {
     fetchTask()
   }, [selectedTaskId])
 
-  const fetchAllTasks = async () => {
+  const fetchAllTasks = async (): Promise<void> => {
     if (status === "authenticated" && session) {
       const tasks = await getTasksForMonth(currentYear, currentMonth + 1)
       setTasksByMonth(tasks)
@@ -88,7 +88,7 @@ export const CalendarContainer: React.FC<Props> = () => {
     fetchAllTasks()
   }, [currentMonth, currentYear, status])
 
-  const handleOpenModal = (isNew = false) => {
+  const handleOpenModal = (isNew: boolean = false): void => {
     if (status === "unauthenticated" && !session) {
       toast({
         title: "Pliease Sign In or Sign up in order to add tasks",
@@ -102,7 +102,7 @@ export const CalendarContainer: React.FC<Props> = () => {
     }
   }
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setShowModal(false)
     setTask(undefined)
     router.replace("/")
